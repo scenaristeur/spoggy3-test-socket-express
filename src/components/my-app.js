@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { LitElement, html } from '@polymer/lit-element';
+import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 import { connect } from 'pwa-helpers/connect-mixin.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
@@ -234,8 +235,7 @@ class MyApp extends connect(store)(LitElement) {
       _drawerOpened: Boolean,
       _snackbarOpened: Boolean,
       _offline: Boolean,
-      _usersLength : Number,
-      agentApp: Object,
+      _usersLength : Number
     }
   }
 
@@ -244,7 +244,13 @@ class MyApp extends connect(store)(LitElement) {
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
+      this.agentApp = new AppAgent('agentApp', this);
+    afterNextRender(this, function() {
 
+        this.agentApp.send('agentChat', 'Hello agentChat!');
+      //  eve.agents = eve.system.transports.transports[0].agents; //this._getAgents();
+      console.log(eve.agents)
+    });
   }
 
   _firstRendered() {
@@ -253,14 +259,13 @@ class MyApp extends connect(store)(LitElement) {
     installMediaQueryWatcher(`(min-width: 460px)`,
     (matches) => store.dispatch(updateLayout(matches)));
 
-    this.agentApp = new AppAgent('agentApp', this);
-      this.agentApp.send('agentChat', 'Hello agentChat!');
-    //  eve.agents = eve.system.transports.transports[0].agents; //this._getAgents();
-    console.log(eve.agents)
+
   }
   _getAgents(){
     return eve.system.transports.transports[0].agents;
   }
+
+
 
   _didRender(properties, changeList) {
     //  console.log(changeList);

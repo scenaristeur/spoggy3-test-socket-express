@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import { LitElement, html } from '@polymer/lit-element';
-
+import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 // These are the elements needed by this element.
 import { plusIcon, minusIcon } from '../my-icons.js';
 
@@ -251,9 +251,6 @@ class SpoggyChat extends LitElement {
       notify: true,
       reflectToAttribute: true,
       observer: '_statusChanged'
-    },
-    agentChat :{
-      type: Object
     }
   }};
 
@@ -261,7 +258,14 @@ class SpoggyChat extends LitElement {
     super();
     this.clicks = 0;
     this.value = 0;
+      this.agentChat = new ChatAgent('agentChat', this);
+    afterNextRender(this, function() {
 
+      this.agentChat.send('agentApp', 'Hello agentApp!');
+      console.log(eve.system.transports.transports[0].agents),
+      console.log(eve);
+      console.log(eve.agents)
+      });
   }
 
   _firstRendered() {
@@ -274,12 +278,10 @@ class SpoggyChat extends LitElement {
     }else{
       console.log("io non dispo");
     }
-    this.agentChat = new ChatAgent('agentChat', this);
-    this.agentChat.send('agentApp', 'Hello agentApp!');
-    console.log(eve.system.transports.transports[0].agents),
-    console.log(eve);
-    console.log(eve.agents)
+
   }
+
+
 
   _socketChanged(newValue, oldValue) {
     console.log(newValue);
@@ -296,6 +298,7 @@ class SpoggyChat extends LitElement {
     this.clicks++;
 
     this.status = "clic";
+        this.agentChat.send('agentApp', 'Hello agentApp!');
     //  this.dispatchEvent(new CustomEvent('counter-incremented'));
   }
 

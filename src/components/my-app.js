@@ -36,7 +36,7 @@ import { menuIcon } from './my-icons.js';
 import './snack-bar.js';
 
 class MyApp extends connect(store)(LitElement) {
-  _render({appTitle, _page, _drawerOpened, _snackbarOpened, _offline}) {
+  _render({appTitle, _page, _drawerOpened, _snackbarOpened, _offline, _usersLength}) {
     // Anything that's related to rendering should be done in here.
     return html`
     <style>
@@ -184,7 +184,7 @@ class MyApp extends connect(store)(LitElement) {
     <app-header condenses reveals effects="waterfall">
     <app-toolbar class="toolbar-top">
     <button class="menu-btn" title="Menu" on-click="${_ => store.dispatch(updateDrawerState(true))}">${menuIcon}</button>
-    <div main-title>${appTitle}</div>
+    <div main-title>${appTitle} </div>
     </app-toolbar>
 
     <!-- This gets hidden on a small screen-->
@@ -192,7 +192,7 @@ class MyApp extends connect(store)(LitElement) {
     <a selected?="${_page === 'view1'}" href="/view1">SmagYun</a>
     <a selected?="${_page === 'view2'}" href="/view2">Spoggy</a>
     <a selected?="${_page === 'view3'}" href="/view3">View Three</a>
-    <a selected?="${_page === 'view4'}" href="/view4">View 4</a>
+    <a selected?="${_page === 'chat'}" href="/chat">Chat ${_usersLength}</a>
     </nav>
     </app-header>
 
@@ -203,7 +203,7 @@ class MyApp extends connect(store)(LitElement) {
     <a selected?="${_page === 'view1'}" href="/view1">SmagYun</a>
     <a selected?="${_page === 'view2'}" href="/view2">Spoggy</a>
     <a selected?="${_page === 'view3'}" href="/view3">View Three</a>
-    <a selected?="${_page === 'view4'}" href="/view4">View 4</a>
+    <a selected?="${_page === 'chat'}" href="/chat">Chat ${_usersLength}</a>
     </nav>
     </app-drawer>
 
@@ -212,16 +212,16 @@ class MyApp extends connect(store)(LitElement) {
     <my-view1 class="page" active?="${_page === 'view1'}"></my-view1>
     <my-view2 class="page" active?="${_page === 'view2'}"></my-view2>
     <my-view3 class="page" active?="${_page === 'view3'}"></my-view3>
-    <my-view4 class="page" active?="${_page === 'view4'}"></my-view4>
+    <my-chat class="page" active?="${_page === 'chat'}"></my-chat>
     <my-view404 class="page" active?="${_page === 'view404'}"></my-view404>
     </main>
 
     <footer>
-    <p>Made with &hearts; by the Polymer team.</p>
+    <p>Développé avec &hearts; par la Spoggy team.</p>
     </footer>
 
     <snack-bar active?="${_snackbarOpened}">
-    You are now ${_offline ? 'offline' : 'online'}.</snack-bar>
+    Vous êtes ${_offline ? 'hors ligne' : 'en ligne'}.</snack-bar>
     `;
   }
 
@@ -231,7 +231,9 @@ class MyApp extends connect(store)(LitElement) {
       _page: String,
       _drawerOpened: Boolean,
       _snackbarOpened: Boolean,
-      _offline: Boolean
+      _offline: Boolean,
+    //  socket: Object,
+      _usersLength : Number
     }
   }
 
@@ -240,6 +242,7 @@ class MyApp extends connect(store)(LitElement) {
     // To force all event listeners for gestures to be passive.
     // See https://www.polymer-project.org/3.0/docs/devguide/settings#setting-passive-touch-gestures
     setPassiveTouchGestures(true);
+
   }
 
   _firstRendered() {
@@ -247,6 +250,8 @@ class MyApp extends connect(store)(LitElement) {
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     installMediaQueryWatcher(`(min-width: 460px)`,
     (matches) => store.dispatch(updateLayout(matches)));
+    console.log(socket);
+        this._initSocket();
   }
 
   _didRender(properties, changeList) {
@@ -265,6 +270,18 @@ class MyApp extends connect(store)(LitElement) {
     this._offline = state.app.offline;
     this._snackbarOpened = state.app.snackbarOpened;
     this._drawerOpened = state.app.drawerOpened;
+  }
+
+  _initSocket(){
+    const app = this;
+console.log(socket)
+    socket.on("userJoin", function(data){
+      console.log(data);
+    });
+    socket.on("usersLength", function(data){
+      console.log(data);
+      app._usersLength = data.usersLength;
+    });
   }
 }
 

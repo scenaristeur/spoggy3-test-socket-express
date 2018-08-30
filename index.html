@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>Spoggy</title>
     <meta name="generator" content="PWA Starter Kit">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="My App description">
+    <meta name="description" content="Spoggy, on n'a pas trouvé meilleure idée pour partager ses idées...">
 
     <!--
       The `<base>` tag below is present to support two advanced deployment options:
@@ -104,7 +104,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
   </head>
   <body>
-    <my-app appTitle="Spoggy"></my-app>
+    <my-app id="app" appTitle="Spoggy" ></my-app>
     <noscript>
       Please enable JavaScript to view this website.
     </noscript>
@@ -116,7 +116,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script >
     const urlSocket = window.location.hostname+':3000'
     const socket = io(urlSocket);
-    console.log(socket);
+    const app = document.getElementById("app");
+  //  console.log(app);
+    app.socket = socket;
+      console.log(app);
+
     </script>
     <script type="module" src="src/components/my-app.js" crossorigin></script>
   </body>

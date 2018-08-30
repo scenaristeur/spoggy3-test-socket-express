@@ -49,6 +49,7 @@ io.on('connection', function (socket) {
         sockets[currentUser.id] = socket;
         users.push(currentUser);
         io.emit('userJoin', { nick: currentUser.nick });
+        io.emit('usersLength', { usersLength: users.length });
         console.log('[INFO] Total users: ' + users.length);
     }
 
@@ -58,8 +59,9 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         if ((0, _util.findIndex)(users, currentUser.id) > -1) users.splice((0, _util.findIndex)(users, currentUser.id), 1);
-        console.log('[INFO] User ' + currentUser.nick + ' disconnected!');
+        console.log('[INFO] User ' + currentUser.nick + ' disconnected! '+users.length);
         socket.broadcast.emit('userDisconnect', { nick: currentUser.nick });
+        io.emit('usersLength', { usersLength: users.length });
     });
 
     socket.on('userChat', function (data) {

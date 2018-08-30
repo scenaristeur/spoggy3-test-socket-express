@@ -26,6 +26,13 @@ npm start -- --hostname 0.0.0.0 --port 4444
 npm run test
 ```
 
+# Pour l'utilisation multiutilisateur
+lancer dans un autre terminal :
+```
+node .
+```
+
+
 Available scripts (https://polymer.github.io/pwa-starter-kit/setup/)
 In the app’s root directory you can run:
 

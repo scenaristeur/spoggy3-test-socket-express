@@ -35,6 +35,8 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import { menuIcon } from './my-icons.js';
 import './snack-bar.js';
 
+import { AppAgent } from '../agents/AppAgent.js';
+
 class MyApp extends connect(store)(LitElement) {
   _render({appTitle, _page, _drawerOpened, _snackbarOpened, _offline, _usersLength}) {
     // Anything that's related to rendering should be done in here.
@@ -232,8 +234,8 @@ class MyApp extends connect(store)(LitElement) {
       _drawerOpened: Boolean,
       _snackbarOpened: Boolean,
       _offline: Boolean,
-      //  socket: Object,
-      _usersLength : Number
+      _usersLength : Number,
+      agentApp: Object,
     }
   }
 
@@ -251,19 +253,18 @@ class MyApp extends connect(store)(LitElement) {
     installMediaQueryWatcher(`(min-width: 460px)`,
     (matches) => store.dispatch(updateLayout(matches)));
 
-    if (typeof io !== 'undefined'){
-      console.log("io dispo");
-      const urlSocket = window.location.hostname+':3000';
-      this._initSocket(urlSocket);
-    }else{
-      console.log("io non dispo");
-    }
-
+    this.agentApp = new AppAgent('agentApp', this);
+      this.agentApp.send('agentChat', 'Hello agentChat!');
+    //  eve.agents = eve.system.transports.transports[0].agents; //this._getAgents();
+    console.log(eve.agents)
+  }
+  _getAgents(){
+    return eve.system.transports.transports[0].agents;
   }
 
   _didRender(properties, changeList) {
-  //  console.log(changeList);
-  //  console.log(properties)
+    //  console.log(changeList);
+    //  console.log(properties)
     if ('_page' in changeList) {
       const pageTitle = properties.appTitle + ' - ' + changeList._page;
       updateMetadata({
@@ -279,28 +280,6 @@ class MyApp extends connect(store)(LitElement) {
     this._offline = state.app.offline;
     this._snackbarOpened = state.app.snackbarOpened;
     this._drawerOpened = state.app.drawerOpened;
-  }
-
-  _initSocket(urlSocket){
-    const app = this;
-    this.socket = io(urlSocket);
-  //  console.log(this.socket);
-    this.socket.on('connect', function(){console.log("socket connect")});
-    this.socket.on('event', function(data){console.log("event : ", event)});
-    this.socket.on('disconnect', function(){console.log("disconnect")});
-    this.socket.on("userJoin", function(data){
-    //  console.log(data);
-    });
-    this.socket.on("usersLength", function(data){
-    //  console.log(data);
-      app._usersLength = data.usersLength;
-      /*const pageTitle = app.appTitle + ' - ' + app._page+ ' - '+app._usersLength;
-      updateMetadata({
-        title: pageTitle,
-        description: pageTitle
-        // This object also takes an image property, that points to an img src.
-      });*/
-    });
   }
 }
 

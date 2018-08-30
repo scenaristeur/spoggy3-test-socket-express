@@ -19,9 +19,30 @@ class MyChat extends PageViewElement {
   _render(props) {
     return html`
     ${SharedStyles}
-    <spoggy-chat id="chat">...chat-rgement<spoggy-chat>
+  666${props.status}333
+    -{{status}}-
+    <spoggy-chat id="chat" status="${props.status}">...chat-rgement<spoggy-chat>
     `
   }
+
+
+  static get properties() { return {
+    /* The total number of clicks you've done. */
+    clicks: Number,
+    /* The current value of the counter. */
+    value: Number,
+    socket: {
+      type: Object
+
+    },
+    status: {
+      type: String,
+      value: "test in my-chat",
+      notify: true,
+      reflectToAttribute: true,
+        observer: '_statusChanged'
+    }
+  }};
 
 }
 

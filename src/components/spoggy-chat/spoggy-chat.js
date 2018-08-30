@@ -16,8 +16,9 @@ import { plusIcon, minusIcon } from '../my-icons.js';
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from '../button-shared-styles.js';
 
-import "@polymer/paper-button/paper-button.js"
-import "@polymer/paper-input/paper-input.js"
+import "@polymer/paper-button/paper-button.js";
+import "@polymer/paper-input/paper-input.js";
+import { ChatAgent } from './ChatAgent.js';
 /*import '../../js/client'*/
 /*
 import * as io from 'socket.io-client/dist/socket.io';
@@ -214,12 +215,13 @@ class SpoggyChat extends LitElement {
     }
     </style>
 
+    ${props.status}
     <section>
     <div class="chatbox" id="chatbox">
     <ul id="chatList" class="chat-list"></ul>
     <input id="chatInput" type="text" class="chat-input" placeholder="Chat ici..." maxlength="35" />
     </div>
-  <div id="startMenu">
+    <div id="startMenu">
     <input type="text" tabindex="0" autofocus placeholder="Entrez votre pseudo" id="userNameInput" maxlength="25" />
     <b class="input-error">Votre pseudo ne doit être composé que de charactères alphanumériques!</b>
 
@@ -238,18 +240,54 @@ class SpoggyChat extends LitElement {
     /* The total number of clicks you've done. */
     clicks: Number,
     /* The current value of the counter. */
-    value: Number
+    value: Number,
+    socket: {
+      type: Object
+
+    },
+    status: {
+      type: String,
+      value: "test",
+      notify: true,
+      reflectToAttribute: true,
+      observer: '_statusChanged'
+    },
+    agentChat :{
+      type: Object
+    }
   }};
 
   constructor() {
     super();
     this.clicks = 0;
     this.value = 0;
+
   }
 
   _firstRendered() {
     // Any code that relies on render having been called once goes here.
     // (for example setting up listeners, etc)
+    if (typeof io !== 'undefined'){
+      console.log("io dispo");
+      const urlSocket = window.location.hostname+':3000';
+      this._initSocket(urlSocket);
+    }else{
+      console.log("io non dispo");
+    }
+    this.agentChat = new ChatAgent('agentChat', this);
+    this.agentChat.send('agentApp', 'Hello agentApp!');
+    console.log(eve.system.transports.transports[0].agents),
+    console.log(eve);
+    console.log(eve.agents)
+  }
+
+  _socketChanged(newValue, oldValue) {
+    console.log(newValue);
+    console.log(oldValue);
+  }
+
+  _statusChanged(n,o){
+    console.log(n,o)
   }
 
   _onStart() {
@@ -257,6 +295,7 @@ class SpoggyChat extends LitElement {
     this.value++;
     this.clicks++;
 
+    this.status = "clic";
     //  this.dispatchEvent(new CustomEvent('counter-incremented'));
   }
 
@@ -265,6 +304,31 @@ class SpoggyChat extends LitElement {
     this.clicks++;
     //  this.dispatchEvent(new CustomEvent('counter-decremented'));
   }
+
+  _initSocket(urlSocket){
+    this.status = "debut";
+    const app = this;
+    this.socket = io(urlSocket);
+    //  console.log(this.socket);
+    this.socket.on('connect', function(){console.log("socket connect")});
+    this.socket.on('event', function(data){console.log("event : ", event)});
+    this.socket.on('disconnect', function(){console.log("disconnect")});
+    this.socket.on("userJoin", function(data){
+      //  console.log(data);
+    });
+    this.socket.on("usersLength", function(data){
+      //  console.log(data);
+      app._usersLength = data.usersLength;
+      /*const pageTitle = app.appTitle + ' - ' + app._page+ ' - '+app._usersLength;
+      updateMetadata({
+      title: pageTitle,
+      description: pageTitle
+      // This object also takes an image property, that points to an img src.
+    });*/
+  });
+}
+
+
 }
 
 window.customElements.define('spoggy-chat', SpoggyChat);

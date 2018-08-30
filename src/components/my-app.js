@@ -232,7 +232,7 @@ class MyApp extends connect(store)(LitElement) {
       _drawerOpened: Boolean,
       _snackbarOpened: Boolean,
       _offline: Boolean,
-    //  socket: Object,
+      //  socket: Object,
       _usersLength : Number
     }
   }
@@ -250,11 +250,20 @@ class MyApp extends connect(store)(LitElement) {
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     installMediaQueryWatcher(`(min-width: 460px)`,
     (matches) => store.dispatch(updateLayout(matches)));
-    console.log(socket);
-        this._initSocket();
+
+    if (typeof io !== 'undefined'){
+      console.log("io dispo");
+      const urlSocket = window.location.hostname+':3000';
+      this._initSocket(urlSocket);
+    }else{
+      console.log("io non dispo");
+    }
+
   }
 
   _didRender(properties, changeList) {
+  //  console.log(changeList);
+  //  console.log(properties)
     if ('_page' in changeList) {
       const pageTitle = properties.appTitle + ' - ' + changeList._page;
       updateMetadata({
@@ -272,15 +281,25 @@ class MyApp extends connect(store)(LitElement) {
     this._drawerOpened = state.app.drawerOpened;
   }
 
-  _initSocket(){
+  _initSocket(urlSocket){
     const app = this;
-console.log(socket)
-    socket.on("userJoin", function(data){
-      console.log(data);
+    this.socket = io(urlSocket);
+  //  console.log(this.socket);
+    this.socket.on('connect', function(){console.log("socket connect")});
+    this.socket.on('event', function(data){console.log("event : ", event)});
+    this.socket.on('disconnect', function(){console.log("disconnect")});
+    this.socket.on("userJoin", function(data){
+    //  console.log(data);
     });
-    socket.on("usersLength", function(data){
-      console.log(data);
+    this.socket.on("usersLength", function(data){
+    //  console.log(data);
       app._usersLength = data.usersLength;
+      /*const pageTitle = app.appTitle + ' - ' + app._page+ ' - '+app._usersLength;
+      updateMetadata({
+        title: pageTitle,
+        description: pageTitle
+        // This object also takes an image property, that points to an img src.
+      });*/
     });
   }
 }

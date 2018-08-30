@@ -111,18 +111,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
     <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <!-- Built with love using PWA Starter Kit -->
-  <!--  <script src="node_modules/socket.io-client/dist/socket.io.js"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-  <!--  <script src="js/client.js"></script>-->
     <script >
-    const urlSocket = window.location.hostname+':3000'
-    const socket = io(urlSocket);
-    const app = document.getElementById("app");
-  //  console.log(app);
-    app.socket = socket;
-      console.log(app);
+  </script>
+  <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+  <!--<script src="/socket.io/socket.io.js"></script>-->
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>-->
 
-    </script>
     <script type="module" src="src/components/my-app.js" crossorigin></script>
   </body>
 </html>

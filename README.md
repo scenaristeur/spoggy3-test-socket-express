@@ -69,6 +69,7 @@ npm run serve:prpl-server
 After building, the contents of server/ contains all the files and configuration necessary to run the app in production. The provided server/package.json specifies server dependencies and the start command which can be used on almost any hosting service that supports Node.js.
 
 --------------------
+https://github.com/socketio/socket.io/tree/master/examples/webpack-build-server
 socket.io https://github.com/chanlito/socket.io-controllers
 
 

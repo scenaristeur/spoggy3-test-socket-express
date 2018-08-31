@@ -12,7 +12,11 @@
       "type": "script",
       "weight": 1
     },
-    "node_modules/node_modules/socket.io-client/dist/socket.io.js": {
+    "node_modules/socket.io-client/dist/socket.io.js": {
+      "type": "script",
+      "weight": 1
+    },
+    "js/eve.min.js": {
       "type": "script",
       "weight": 1
     }
